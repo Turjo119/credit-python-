@@ -1,124 +1,51 @@
-#include <cs50.h>
-#include <stdio.h>
+from cs50 import get_int
+from cs50 import get_string
 
-int main(void)
-{
-    // User input of CC number
-    long CC = get_long("Enter Credit Card Number: ");
-    long store = CC; // for later use
+# User input Credit Card Number
+CC = get_int("Enter Credit Card Number: ")
 
-    //Check for correct number of digits
-    int counter = 0; // counting no. of digits
-    int a; // variable for reasons
-    for (counter = 0; store != 0; counter ++)
-    {
-        a = store % 10;
-        store = store / 10;
-    }
-    printf(" Number of digits: %i\n", counter);
-    int name = counter; // to find the name of the card
+# Check for valid number of digits
+digits = len(str(CC))
+if digits < 13 or digits > 16 or digits == 14:
+    print("Invalid")
+    exit(1)
 
-    if ((counter < 13) || (counter > 16))
-    {
-        printf("INVALID\n");
-        return 0;
-    }
+elif digits == 13 or digits == 15 or digits == 16:
+    #Variables for use
+    tmp0 = CC
+    tmp1 = CC
+    sum0 = 0
+    sum1 = 0
+    total_sum = 0
+    rmd0 = 0
+    rmd1 = 0
+    special = 0
 
-    else if ((counter = 13) || (counter = 15) || (counter = 16))
-    {
-        long store2 = CC; // for later use
-        int sum1 = 0; // for every other digit 2nd-to-last
-        int sum2 = 0; // remaining digits
-        int sum3 = 0; // total sum
-        int rmdr; // remainder from every other digit 2nd-to-last
-        int special; // for product digits greater than 9
+    # Lund's algorithm step 1
+    while(tmp0 != 0):
+        rmd0 = ((tmp0 / 10) % 10) * 2
+        tmp0 = tmp0 / 100
 
-        // Seperating every other digit
+        if (rmd0 > 0 or rmd0 < 9):
+            sum0 = sum0 + rmd0
+        else:
+            special = sum0 + special
 
-        for (int c = 0; store2 != 0; c++)
-        {
-            rmdr = ((store2 / 10) % 10) * 2;
-            store2 = store2 / 100;
-            if (rmdr > 0 && rmdr < 9)
-            {
-                sum1 = sum1 + rmdr;
-            }
+    print (f"sum0 is {sum0} ")
 
-            else
-            {
-                special = (rmdr / 10) + (rmdr % 10);
-                sum1 = sum1 + special;
+    # Lund's algorithm step 2
+    while (tmp1 != 0):
+        rmd1 = (tmp1 / 100) % 10
+        tmp1 = tmp1 / 100
+        sum1 = sum1 + rmd1
 
-            }
+    print(f"sum1 is {sum1}")
+    total_sum = sum0 + sum1
+    print(f"total_sum is {total_sum}")
 
-        }
-        // For the remaining digits
-        long store3 = CC; // for later use
-        int rmdr2; //  for remaining digits
-        for (int d = 0; store3 != 0; d++)
-        {
-            rmdr2 = (store3 % 100) % 10;
-            store3 = store3 / 100;
-            sum2 = sum2 + rmdr2;
-        }
+    # Check for valid number
+    if (int(total_sum % 10) == 0):
+        print("CARD IS VALID")
+    else:
+        print("CARD IS INVALID")
 
-        sum3 = sum1 + sum2;
-        printf("sum1 = %i\n", sum1);
-        printf("sum2 = %i\n", sum2);
-        printf("sum3 = %i\n", sum3);
-
-        if (sum3 % 10 == 0)
-        {
-            printf("VALID\n");
-        }
-
-        else
-        {
-            printf("INVALID\n");
-            return 0;
-        }
-
-        long store4 = CC;// for later use
-        // AMEX,VISA OR MASTERCARD
-        if (name ==  15)
-        {
-            int x = store4 / 10000000000000;
-            printf("x is %i\n", x);
-            if ((x == 34) || (x == 37))
-            {
-                printf("AMEX\n");
-            }
-            else
-            {
-                printf("INVALID\n");
-            }
-
-        }
-        else if (name == 16)
-        {
-            int x = store4 / 100000000000000;
-            printf("x is %i\n", x);
-            if ((x >= 51) && (x <= 55))
-            {
-                printf("MASTERCARD\n");
-            }
-            else if ((x >= 40) && (x <= 49))
-            {
-                printf("VISA\n");
-            }
-            else
-            {
-                printf("INVALID\n");
-            }
-        }
-        else if (name == 13)
-        {
-            int x = store4 / 100000000000;
-            printf("x is %i\n", x);
-            if ((x >= 40) && (x <= 49))
-            {
-                printf("VISA\n");
-            }
-        }
-    }
-}
